@@ -40,8 +40,10 @@ jobs:
 
       - name: Build and push ragflow_deps image (ARM64)
         run: |
-          docker buildx build --platform linux/arm64 -f Dockerfile.deps -t ghcr.io/${{ github.repository }}/ragflow_deps:arm64 --push .
+          repo_name=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker buildx build --platform linux/arm64 -f Dockerfile.deps -t ghcr.io/${repo_name}/ragflow_deps:arm64 --push .
 
       - name: Build and push ragflow main image (ARM64)
         run: |
-          docker buildx build --platform linux/arm64 -f Dockerfile -t ghcr.io/${{ github.repository }}/ragflow:nightly-arm64 --push .
+          repo_name=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker buildx build --platform linux/arm64 -f Dockerfile -t ghcr.io/${repo_name}/ragflow:nightly-arm64 --push .
