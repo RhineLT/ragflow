@@ -33,9 +33,10 @@ on:
           sudo apt-get install -y unixodbc
 
       - name: Download dependencies
-        run: |
-          pip install uv
-          uv run download_deps.py
+          run: |
+            pip install uv
+            uv pip install -e .
+            uv run download_deps.py
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -90,9 +91,10 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y unixodbc
         - name: Download dependencies
-          run: |
-            pip install uv
-            uv run download_deps.py
+            run: |
+              pip install uv
+              uv pip install -e .
+              uv run download_deps.py
         - name: Login to GitHub Container Registry
           uses: docker/login-action@v3
           with:
@@ -196,9 +198,10 @@ jobs:
             sudo apt-get install -y unixodbc
 
         - name: Download dependencies
-          run: |
-            pip install uv
-            uv run download_deps.py
+            run: |
+              pip install uv
+              uv pip install -e .
+              uv run download_deps.py
 
         - name: Login to GitHub Container Registry
           uses: docker/login-action@v3
