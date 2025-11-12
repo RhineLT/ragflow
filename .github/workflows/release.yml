@@ -9,8 +9,56 @@ on:
       - "v*.*.*"                  # normal release
       - "nightly"                 # the only one mutable tag
 
+
+  build-arm64-image-manual:
+    name: Build and Push ARM64 Docker Image (Manual)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU for ARM emulation
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Upgrade xgboost for ARM64
+        run: |
+          sed -i 's/xgboost = "[^"]*"/xgboost = "1.6.0"/' pyproject.toml
+
+      - name: Install unixODBC
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unixodbc
+
+      - name: Download dependencies
+        run: |
+          pip install uv
+          uv run download_deps.py
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ragflow_deps image (ARM64)
+        run: |
+          docker buildx build --platform linux/arm64 -f Dockerfile.deps -t ghcr.io/${{ github.repository }}/ragflow_deps:arm64 --push .
+
+      - name: Build and push ragflow main image (ARM64)
+        run: |
+          docker buildx build --platform linux/arm64 -f Dockerfile -t ghcr.io/${{ github.repository }}/ragflow:nightly-arm64 --push .
 # https://docs.github.com/en/actions/using-jobs/using-concurrency
 concurrency:
+    workflow_dispatch:
+      inputs:
+        build_arm64:
+          description: '手动构建并推送 ARM64 镜像到 GitHub 镜像仓库'
+          required: false
+          type: boolean
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
@@ -24,6 +72,39 @@ jobs:
       # https://github.com/actions/checkout/blob/v3/README.md
       - name: Check out code
         uses: actions/checkout@v4
+    build-arm64-manual:
+      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.build_arm64 == 'true' }}
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+        - name: Set up QEMU for ARM emulation
+          uses: docker/setup-qemu-action@v3
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v3
+        - name: Upgrade xgboost for ARM64
+          run: |
+            sed -i 's/xgboost = "[^"]*"/xgboost = "1.6.0"/' pyproject.toml
+        - name: Install unixODBC
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y unixodbc
+        - name: Download dependencies
+          run: |
+            pip install uv
+            uv run download_deps.py
+        - name: Login to GitHub Container Registry
+          uses: docker/login-action@v3
+          with:
+            registry: ghcr.io
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+        - name: Build and push ragflow_deps image (ARM64)
+          run: |
+            docker buildx build --platform linux/arm64 -f Dockerfile.deps -t ghcr.io/${{ github.repository }}/ragflow_deps:arm64 --push .
+        - name: Build and push ragflow main image (ARM64)
+          run: |
+            docker buildx build --platform linux/arm64 -f Dockerfile -t ghcr.io/${{ github.repository }}/ragflow:nightly-arm64 --push .
         with:
           token: ${{ secrets.GITHUB_TOKEN }}  # Use the secret as an environment variable
           fetch-depth: 0
@@ -92,3 +173,44 @@ jobs:
           sudo docker tag infiniflow/ragflow:${RELEASE_TAG} infiniflow/ragflow:latest
           sudo docker push infiniflow/ragflow:${RELEASE_TAG}
           sudo docker push infiniflow/ragflow:latest
+
+    build-arm64-image:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Set up QEMU for ARM emulation
+          uses: docker/setup-qemu-action@v3
+
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v3
+
+        - name: Upgrade xgboost for ARM64
+          run: |
+            sed -i 's/xgboost = "[^"]*"/xgboost = "1.6.0"/' pyproject.toml
+
+        - name: Install unixODBC
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y unixodbc
+
+        - name: Download dependencies
+          run: |
+            pip install uv
+            uv run download_deps.py
+
+        - name: Login to GitHub Container Registry
+          uses: docker/login-action@v3
+          with:
+            registry: ghcr.io
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Build and push ragflow_deps image (ARM64)
+          run: |
+            docker buildx build --platform linux/arm64 -f Dockerfile.deps -t ghcr.io/${{ github.repository }}/ragflow_deps:arm64 --push .
+
+        - name: Build and push ragflow main image (ARM64)
+          run: |
+            docker buildx build --platform linux/arm64 -f Dockerfile -t ghcr.io/${{ github.repository }}/ragflow:nightly-arm64 --push .
