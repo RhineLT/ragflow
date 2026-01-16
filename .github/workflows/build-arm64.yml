@@ -187,10 +187,10 @@ jobs:
         run: |
           cd docker
           cp .env .env.backup || true
-          
+
           # Update .env to use ARM64 image
           sed -i "s|RAGFLOW_IMAGE=.*|RAGFLOW_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:arm64-latest|g" .env
-          
+
           echo "Updated .env file:"
           grep RAGFLOW_IMAGE .env
 
@@ -199,11 +199,11 @@ jobs:
           cd docker
           echo "Starting docker-compose services..."
           docker-compose --profile cpu up -d mysql redis minio
-          
+
           # Wait for services to be healthy
           echo "Waiting for services to be healthy..."
           sleep 30
-          
+
           # Check service status
           docker-compose ps
 
@@ -212,22 +212,22 @@ jobs:
           cd docker
           # Start ragflow service
           docker-compose --profile cpu up -d ragflow-cpu
-          
+
           # Wait for container to start
           sleep 10
-          
+
           # Get container ID
           CONTAINER_ID=$(docker-compose ps -q ragflow-cpu)
           echo "RagFlow container ID: ${CONTAINER_ID}"
-          
+
           if [ -n "${CONTAINER_ID}" ]; then
             echo "=== Container inspection ==="
             docker inspect ${CONTAINER_ID} | jq '.[0].Config.Image, .[0].Platform'
-            
+
             # Verify architecture inside container
             echo "=== Verifying architecture inside container ==="
             docker exec ${CONTAINER_ID} uname -m || echo "Container not ready yet"
-            
+
             # Check if container is running
             STATUS=$(docker inspect ${CONTAINER_ID} | jq -r '.[0].State.Status')
             echo "Container status: ${STATUS}"
