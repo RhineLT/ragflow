@@ -28,7 +28,7 @@ concurrency:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: rhinelt/ragflow
 
 jobs:
   build-ragflow-arm64:
@@ -183,7 +183,7 @@ jobs:
           fi
           echo "✓ Successfully verified ARM64 architecture"
 
-      - name: Prepare docker-compose environment
+      - name: Prepare docker compose environment
         run: |
           cd docker
           cp .env .env.backup || true
@@ -194,30 +194,30 @@ jobs:
           echo "Updated .env file:"
           grep RAGFLOW_IMAGE .env
 
-      - name: Start services with docker-compose
+      - name: Start services with docker compose
         run: |
           cd docker
-          echo "Starting docker-compose services..."
-          docker-compose --profile cpu up -d mysql redis minio
+          echo "Starting docker compose services..."
+          docker compose --profile cpu up -d mysql redis minio
 
           # Wait for services to be healthy
           echo "Waiting for services to be healthy..."
           sleep 30
 
           # Check service status
-          docker-compose ps
+          docker compose ps
 
       - name: Verify RagFlow container architecture
         run: |
           cd docker
           # Start ragflow service
-          docker-compose --profile cpu up -d ragflow-cpu
+          docker compose --profile cpu up -d ragflow-cpu
 
           # Wait for container to start
           sleep 10
 
           # Get container ID
-          CONTAINER_ID=$(docker-compose ps -q ragflow-cpu)
+          CONTAINER_ID=$(docker compose ps -q ragflow-cpu)
           echo "RagFlow container ID: ${CONTAINER_ID}"
 
           if [ -n "${CONTAINER_ID}" ]; then
@@ -240,15 +240,15 @@ jobs:
         run: |
           cd docker
           echo "=== RagFlow logs ==="
-          docker-compose logs ragflow-cpu || true
+          docker compose logs ragflow-cpu || true
           echo "=== MySQL logs ==="
-          docker-compose logs mysql | tail -50 || true
+          docker compose logs mysql | tail -50 || true
 
       - name: Cleanup
         if: always()
         run: |
           cd docker
-          docker-compose --profile cpu down -v || true
+          docker compose --profile cpu down -v || true
 
   summary:
     name: Build Summary
