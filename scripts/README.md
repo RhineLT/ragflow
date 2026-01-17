@@ -29,9 +29,9 @@ Verifies that ARM64 images are correctly built and pushed to GHCR.
 
 ### setup-arm64-compose.sh
 
-配置 docker-compose 使用 ARM64 镜像。
+配置 docker compose 使用 ARM64 镜像。
 
-Configures docker-compose to use ARM64 images.
+Configures docker compose to use ARM64 images.
 
 **用法 / Usage:**
 ```bash
@@ -97,20 +97,20 @@ Run the setup script to update the .env file:
 
 ```bash
 cd docker
-docker-compose --profile cpu up -d
+docker compose --profile cpu up -d
 ```
 
 ### 5. 检查状态 / Check Status
 
 ```bash
 # 查看所有服务状态 / View all services status
-docker-compose ps
+docker compose ps
 
 # 查看 RagFlow 日志 / View RagFlow logs
-docker-compose logs -f ragflow-cpu
+docker compose logs -f ragflow-cpu
 
 # 验证容器架构 / Verify container architecture
-docker exec $(docker-compose ps -q ragflow-cpu) uname -m
+docker exec $(docker compose ps -q ragflow-cpu) uname -m
 # 应该输出 / Should output: aarch64
 ```
 
@@ -140,7 +140,7 @@ docker exec $(docker-compose ps -q ragflow-cpu) uname -m
 
 **解决方案 / Solution:**
 1. 检查依赖服务（MySQL, Redis, MinIO）是否健康
-2. 查看容器日志：`docker-compose logs ragflow-cpu`
+2. 查看容器日志：`docker compose logs ragflow-cpu`
 3. 验证 .env 文件配置是否正确
 
 ## 相关文档 / Related Documentation

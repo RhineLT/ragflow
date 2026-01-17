@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to configure docker-compose to use ARM64 images
+# Script to configure docker compose to use ARM64 images
 # Usage: ./setup-arm64-compose.sh
 
 set -e
@@ -91,11 +91,11 @@ echo "   docker pull --platform linux/arm64 ${REGISTRY}/${REPO}:arm64-latest"
 echo ""
 echo "2. Start services:"
 echo "   cd ${DOCKER_DIR}"
-echo "   docker-compose --profile cpu up -d"
+echo "   docker compose --profile cpu up -d"
 echo ""
 echo "3. Check status:"
-echo "   docker-compose ps"
-echo "   docker-compose logs -f ragflow-cpu"
+echo "   docker compose ps"
+echo "   docker compose logs -f ragflow-cpu"
 echo ""
 echo "To restore previous configuration:"
 echo "   cp ${ENV_BACKUP} ${ENV_FILE}"
