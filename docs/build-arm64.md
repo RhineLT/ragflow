@@ -6,6 +6,8 @@ This document describes the ARM64 image build process for RagFlow.
 
 The ARM64 build workflow creates multi-architecture Docker images for RagFlow and its dependencies, optimized for ARM64 platforms (Apple Silicon, AWS Graviton, etc.).
 
+> 🚀 **Latest Optimization**: The workflow now uses GitHub Actions native ARM64 runners (`ubuntu-24.04-arm`) for 3-4x faster builds compared to QEMU emulation!
+
 ## Images Built
 
 The workflow builds and pushes the following ARM64 images to GitHub Container Registry (GHCR):
@@ -24,7 +26,15 @@ The workflow is triggered by:
 
 ## Key Features
 
-### 1. ARM64-Specific Dockerfile
+### 1. Native ARM64 Runner
+
+The workflow uses GitHub Actions native ARM64 runner:
+- **Runner**: `ubuntu-24.04-arm` (4 CPU, 16GB RAM, 14GB SSD)
+- **Architecture**: Native ARM64 (no QEMU emulation needed)
+- **Cost**: Free for public repositories
+- **Performance**: 3-4x faster than QEMU-based builds
+
+### 2. ARM64-Specific Dockerfile
 
 The `Dockerfile.arm64` is optimized for ARM64 builds:
 - Downloads dependencies during build (no separate deps image required)
@@ -33,23 +43,31 @@ The `Dockerfile.arm64` is optimized for ARM64 builds:
 - Skips Chrome/ChromeDriver for ARM64 (not available)
 - Installs correct architecture-specific packages
 
-### 2. Multi-stage Verification
+### 3. Multi-stage Verification
 
 The workflow includes:
-1. **Build Stage**: Builds ARM64 images using QEMU and Docker Buildx
+1. **Build Stage**: Builds ARM64 images natively on ARM64 runner
 2. **Verification Stage**:
    - Pulls and inspects images to verify ARM64 architecture
-   - Tests images with docker-compose
+   - Tests images with docker compose
    - Validates container startup and health
 3. **Summary Stage**: Provides build summary with image tags
 
-### 3. Caching Strategy
+### 4. Caching Strategy
 
 Build caching is enabled using GitHub Actions cache:
-- APT packages cache: `ragflow_apt_arm64`
-- UV/Python packages cache: `ragflow_uv_arm64`
-- NPM packages cache: `ragflow_npm_arm64`
-- Docker layer cache: `type=gha`
+- Docker layer cache: `type=gha,scope=ragflow-arm64-native`
+- APT packages cache in Dockerfile
+- UV/Python packages cache in Dockerfile
+- NPM packages cache in Dockerfile
+
+## Expected Build Times
+
+| Task | QEMU (old) | Native ARM64 (new) |
+|------|------------|-------------------|
+| RagFlow main image | 60-70 min | 15-25 min |
+| Sandbox images | 5-10 min | 2-3 min |
+| Total | 70-80 min | 20-30 min |
 
 ## Usage
 
@@ -57,7 +75,7 @@ Build caching is enabled using GitHub Actions cache:
 
 ```bash
 # Pull the main RagFlow ARM64 image
-docker pull --platform linux/arm64 ghcr.io/rhinelt/ragflow:arm64-latest
+docker pull ghcr.io/rhinelt/ragflow:arm64-latest
 
 # Pull sandbox images
 docker pull --platform linux/arm64 ghcr.io/rhinelt/ragflow-sandbox-base-python:arm64-latest

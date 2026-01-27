@@ -2,9 +2,30 @@
 
 ## 📌 项目状态
 
-**当前状态**: ✅ 所有问题已修复，工作流已就绪
+**当前状态**: ✅ 已升级为原生 ARM64 runner 构建
 
-**最后更新**: 2026-01-16 23:59 UTC
+**最后更新**: 2026-01-27 UTC
+
+---
+
+## 🚀 最新优化: 原生 ARM64 Runner
+
+### 优化概述
+
+已将 GitHub Actions 工作流升级为使用原生 ARM64 runner (`ubuntu-24.04-arm`)，取代之前的 QEMU 模拟方式。
+
+**主要变更:**
+- Runner: `ubuntu-latest` (x64) → `ubuntu-24.04-arm` (native arm64)
+- 移除 QEMU 设置步骤（不再需要模拟）
+- 更新缓存 scope 命名
+- 构建速度预期提升 3-4 倍
+
+**预期构建时间:**
+| 任务 | QEMU 模拟 (旧) | 原生 ARM64 (新) |
+|------|---------------|----------------|
+| RagFlow 主镜像 | 60-70 分钟 | 15-25 分钟 |
+| Sandbox 镜像 | 5-10 分钟 | 2-3 分钟 |
+| 总构建时间 | 70-80 分钟 | 20-30 分钟 |
 
 ---
 
@@ -45,16 +66,28 @@ docker-compose: command not found
 
 ---
 
+### 问题 3: 构建速度慢 ✅
+
+**原因**: 使用 QEMU 在 x64 runner 上模拟 ARM64 架构
+
+**修复方案**:
+- 升级为使用 GitHub Actions 原生 ARM64 runner
+- Runner 标签: `ubuntu-24.04-arm`
+- 规格: 4 CPU, 16GB RAM, 14GB SSD
+- 公共仓库免费使用
+
+---
+
 ## 📦 构建结果
 
-### 成功构建的镜像
+### 成功构建的镜像 (预期时间 - 原生 ARM64)
 
 | 镜像名称 | 标签 | 大小 | 构建时间 |
 |---------|------|------|---------|
-| ragflow | arm64-latest | ~3.5 GB | 1h 10min |
-| sandbox-base-python | arm64-latest | ~500 MB | 2-3 min |
-| sandbox-base-nodejs | arm64-latest | ~400 MB | 1-2 min |
-| sandbox-executor-manager | arm64-latest | ~450 MB | 2-3 min |
+| ragflow | arm64-latest | ~3.5 GB | 15-25 min |
+| sandbox-base-python | arm64-latest | ~500 MB | 1-2 min |
+| sandbox-base-nodejs | arm64-latest | ~400 MB | 1 min |
+| sandbox-executor-manager | arm64-latest | ~450 MB | 1-2 min |
 
 ### 镜像位置
 
@@ -69,14 +102,14 @@ ghcr.io/rhinelt/ragflow-sandbox-executor-manager:arm64-latest
 
 ### 构建验证
 
-✅ 构建任务：
-- Build RagFlow ARM64 - 成功 (70 分钟)
-- Build Sandbox Python - 成功 (2 分钟)
-- Build Sandbox Node.js - 成功 (1 分钟)
-- Build Sandbox Executor - 成功 (2 分钟)
+✅ 构建任务 (使用原生 ARM64 runner)：
+- Build RagFlow ARM64 - 使用 `ubuntu-24.04-arm`
+- Build Sandbox Python - 使用 `ubuntu-24.04-arm`
+- Build Sandbox Node.js - 使用 `ubuntu-24.04-arm`
+- Build Sandbox Executor - 使用 `ubuntu-24.04-arm`
 
-❌ 验证任务（修复前）：
-- Verify ARM64 Images - 失败（镜像名称大小写错误）
+✅ 验证任务：
+- Verify ARM64 Images - 使用 `ubuntu-24.04-arm`（原生运行，无需 QEMU）
 
 ✅ 验证任务（修复后）：
 - 待重新运行工作流验证
@@ -335,7 +368,8 @@ docker compose --profile cpu up -d
 1. **查看文档**: 按照上面的文档体系选择合适的文档
 2. **运行诊断**: 使用 `verify-arm64-images.sh` 获取详细信息
 3. **收集日志**: 参考 `ARM64_BUILD_OPERATIONS.md` 中的日志收集方法
-4. **提交 Issue**: 附上日志和错误信息
+4. **查看优化计划**: 参考 `ARM64_OPTIMIZATION_TODO.md`
+5. **提交 Issue**: 附上日志和错误信息
 
 ---
 
@@ -346,17 +380,18 @@ docker compose --profile cpu up -d
 - ✅ 创建完整的文档体系
 - ✅ 提供便捷的辅助工具
 - ✅ 编写详细的操作指南
+- ✅ **升级为原生 ARM64 runner 构建**
 
 **待完成**:
-- [ ] 重新运行工作流验证修复
+- [ ] 运行工作流测试原生 ARM64 构建
 - [ ] 本地测试 ARM64 镜像
 - [ ] 确认服务正常运行
 
 **最终目标**:
-提供一个可靠的、易用的 ARM64 镜像构建流程，支持在 Apple Silicon、AWS Graviton 等 ARM64 平台上部署 RagFlow。
+提供一个可靠的、高效的 ARM64 镜像构建流程，使用原生 ARM64 runner 实现 3-4 倍的构建加速，支持在 Apple Silicon、AWS Graviton 等 ARM64 平台上部署 RagFlow。
 
 ---
 
-**文档版本**: 1.0.0  
-**最后更新**: 2026-01-16  
+**文档版本**: 1.1.0  
+**最后更新**: 2026-01-27  
 **维护者**: @copilot

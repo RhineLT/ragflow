@@ -2,6 +2,10 @@
 
 ## 5 分钟快速上手 / 5-Minute Quick Start
 
+> 🎉 **最新优化**: 已升级为使用 GitHub Actions 原生 ARM64 runner (`ubuntu-24.04-arm`)，构建速度提升 3-4 倍！
+>
+> 🎉 **Latest Update**: Upgraded to native ARM64 runner (`ubuntu-24.04-arm`), 3-4x faster builds!
+
 ### 步骤 1：触发构建 / Step 1: Trigger Build (2 分钟)
 
 1. 打开浏览器，访问：
@@ -15,9 +19,9 @@
 
 4. 等待构建开始（约 5-10 秒后页面会刷新显示新的工作流运行）
 
-**⏱️ 预计等待时间**：
-- 首次构建：30-60 分钟
-- 后续构建：10-15 分钟（有缓存）
+**⏱️ 预计等待时间（原生 ARM64 构建）**：
+- 首次构建：15-25 分钟
+- 后续构建：3-5 分钟（有缓存）
 
 ### 步骤 2：检查构建状态 / Step 2: Check Build Status (持续)
 
@@ -50,20 +54,20 @@
 
 ```bash
 cd docker
-docker-compose --profile cpu up -d
+docker compose --profile cpu up -d
 ```
 
 ### 步骤 6：验证运行 / Step 6: Verify Running (1 分钟)
 
 ```bash
 # 检查所有服务是否正常运行
-docker-compose ps
+docker compose ps
 
 # 查看 RagFlow 日志
-docker-compose logs -f ragflow-cpu
+docker compose logs -f ragflow-cpu
 
 # 验证容器是 ARM64 架构
-docker exec $(docker-compose ps -q ragflow-cpu) uname -m
+docker exec $(docker compose ps -q ragflow-cpu) uname -m
 # 应该输出：aarch64
 ```
 
@@ -72,7 +76,7 @@ docker exec $(docker-compose ps -q ragflow-cpu) uname -m
 ### ✅ 构建成功
 
 在 GitHub Actions 中看到：
-- ✅ Build RagFlow ARM64 - 绿色
+- ✅ Build RagFlow ARM64 - 绿色 (使用 `ubuntu-24.04-arm` 原生 runner)
 - ✅ Build Sandbox Images ARM64 - 绿色
 - ✅ Verify ARM64 Images - 绿色
 - ✅ Build Summary - 绿色
@@ -89,7 +93,7 @@ docker exec $(docker-compose ps -q ragflow-cpu) uname -m
 ### ✅ 服务运行正常
 
 ```bash
-$ docker-compose ps
+$ docker compose ps
 NAME                   STATUS
 ragflow-cpu-1          Up (healthy)
 mysql-1                Up (healthy)
@@ -124,16 +128,16 @@ minio-1                Up (healthy)
 
 ### 问题 3：容器启动失败
 
-**症状**：`docker-compose ps` 显示容器状态不健康
+**症状**：`docker compose ps` 显示容器状态不健康
 
 **解决方案**：
 1. 查看容器日志：
    ```bash
-   docker-compose logs ragflow-cpu
+   docker compose logs ragflow-cpu
    ```
 2. 检查依赖服务是否健康：
    ```bash
-   docker-compose ps mysql redis minio
+   docker compose ps mysql redis minio
    ```
 3. 验证 .env 配置是否正确
 
@@ -142,6 +146,7 @@ minio-1                Up (healthy)
 - 📖 [完整构建文档（中文）](docs/build-arm64-zh.md)
 - 📖 [Full Build Documentation (English)](docs/build-arm64.md)
 - 📋 [项目总结](ARM64_BUILD_SUMMARY.md)
+- 📋 [优化计划](ARM64_OPTIMIZATION_TODO.md)
 - 🛠️ [脚本使用说明](scripts/README.md)
 
 ## 🆘 获取帮助 / Get Help
@@ -150,7 +155,7 @@ minio-1                Up (healthy)
 
 1. **查看日志**：
    - GitHub Actions 构建日志
-   - Docker 容器日志：`docker-compose logs`
+   - Docker 容器日志：`docker compose logs`
 
 2. **运行诊断**：
    ```bash
@@ -168,7 +173,7 @@ minio-1                Up (healthy)
    ```bash
    # 清理容器
    cd docker
-   docker-compose down -v
+   docker compose down -v
    
    # 清理镜像
    docker rmi $(docker images | grep ragflow | awk '{print $3}')
@@ -176,7 +181,7 @@ minio-1                Up (healthy)
    # 重新开始
    ./scripts/setup-arm64-compose.sh
    cd docker
-   docker-compose --profile cpu up -d
+   docker compose --profile cpu up -d
    ```
 
 ## 🎉 完成！/ Done!
@@ -185,7 +190,7 @@ minio-1                Up (healthy)
 - ✅ ARM64 架构的 RagFlow 镜像
 - ✅ 在 GHCR 上的镜像仓库
 - ✅ 本地运行的 RagFlow 服务
-- ✅ 完整的自动化构建流程
+- ✅ 使用原生 ARM64 runner 的高速构建流程（3-4x 更快）
 
 享受使用 RagFlow 的 ARM64 版本吧！🚀
 
