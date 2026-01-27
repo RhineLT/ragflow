@@ -175,11 +175,16 @@ export default {
     },
     knowledgeDetails: {
       metadata: {
+        selectFiles: '已选择 {{count}} 个文件',
+        type: '类型',
+        fieldNameInvalid: '字段名称只能包含字母或下划线。',
+        builtIn: '内置',
+        generation: '生成',
         toMetadataSettingTip: '在配置中设置自动元数据',
         toMetadataSetting: '生成设置',
         descriptionTip:
           '提供描述或示例来指导大语言模型为此字段提取值。如果留空，将依赖字段名称。',
-        restrictTDefinedValuesTip:
+        restrictDefinedValuesTip:
           '枚举模式：限制大语言模型提取的值只能匹配预设值。在下方定义值。',
         valueExists: '值已存在。确认合并重复项并组合所有关联文件。',
         fieldNameExists: '字段名已存在。确认合并重复项并组合所有关联文件。',
@@ -188,10 +193,10 @@ export default {
         fieldExists: '字段名已存在。',
         fieldSetting: '字段设置',
         changesAffectNewParses: '更改仅影响新的解析。',
-        editMetadataForDataset: '查看和编辑元数据 ',
+        // editMetadataForDataset: '查看和编辑元数据 ',
         restrictDefinedValues: '限制为已定义的值',
         metadataGenerationSettings: '元数据生成设置',
-        manageMetadataForDataset: '管理此数据集的元数据',
+        // manageMetadataForDataset: '管理此数据集的元数据',
         manageMetadata: '管理元数据',
         metadata: '元数据',
         values: '值',
@@ -826,7 +831,9 @@ General：实体和关系提取提示来自 GitHub - microsoft/graphrag：基于
       avatarHidden: '隐藏头像',
       locale: '地区',
       tocEnhance: '目录增强',
-      tocEnhanceTip: `解析文档时生成了目录信息（见General方法的‘启用目录抽取’），让大模型返回和用户问题相关的目录项，从而利用目录项拿到相关chunk，对这些chunk在排序中进行加权。这种方法来源于模仿人类查询书本中知识的行为逻辑`,
+      tocEnhanceTip: `解析文档时生成了目录信息（见General方法的'启用目录抽取'），让大模型返回和用户问题相关的目录项，从而利用目录项拿到相关chunk，对这些chunk在排序中进行加权。这种方法来源于模仿人类查询书本中知识的行为逻辑`,
+      batchDeleteSessions: '批量删除',
+      deleteSelectedConfirm: '删除选中的 {count} 个会话？',
     },
     setting: {
       deleteModel: '删除模型',

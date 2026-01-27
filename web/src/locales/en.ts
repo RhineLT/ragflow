@@ -85,6 +85,7 @@ export default {
       description:
         'Sign up for free to explore top RAG technology. Create knowledge bases and AIs to empower your business.',
       review: 'from 500+ reviews',
+      seeAll: 'See all',
     },
     header: {
       knowledgeBase: 'Dataset',
@@ -184,11 +185,16 @@ Example: A 1 KB message with 1024-dim embedding uses ~9 KB. The 5 MB default lim
     },
     knowledgeDetails: {
       metadata: {
+        selectFiles: 'Selected {{count}} files',
+        type: 'Type',
+        fieldNameInvalid: 'Field name can only contain letters or underscores.',
+        builtIn: 'Built-in',
+        generation: 'Generation',
         toMetadataSetting: 'Generation settings',
         toMetadataSettingTip: 'Set auto-metadata in Configuration.',
         descriptionTip:
           'Provide descriptions or examples to guide LLM extract values for this field. If left empty, it will rely on the field name.',
-        restrictTDefinedValuesTip:
+        restrictDefinedValuesTip:
           'Enum Mode: Restricts LLM extraction to match preset values only. Define values below.',
         valueExists:
           'Value already exists. Confirm to merge duplicates and combine all associated files.',
@@ -201,10 +207,10 @@ Example: A 1 KB message with 1024-dim embedding uses ~9 KB. The 5 MB default lim
         fieldExists: 'Field already exists.',
         fieldSetting: 'Field settings',
         changesAffectNewParses: 'Changes affect new parses only.',
-        editMetadataForDataset: 'View and edit metadata for ',
+        // editMetadataForDataset: 'View and edit metadata for ',
         restrictDefinedValues: 'Restrict to defined values',
         metadataGenerationSettings: 'Metadata generation settings',
-        manageMetadataForDataset: 'Manage metadata for this dataset',
+        // manageMetadataForDataset: 'Manage metadata for this dataset',
         manageMetadata: 'Manage metadata',
         metadata: 'Metadata',
         values: 'Values',
@@ -289,7 +295,7 @@ Example: A 1 KB message with 1024-dim embedding uses ~9 KB. The 5 MB default lim
       localFiles: 'Local files',
       emptyFiles: 'Create empty file',
       webCrawl: 'Web crawl',
-      chunkNumber: 'Chunk number',
+      chunkNumber: 'Chunks',
       uploadDate: 'Upload date',
       chunkMethod: 'Chunking method',
       enabled: 'Enable',
@@ -427,7 +433,8 @@ Example: A 1 KB message with 1024-dim embedding uses ~9 KB. The 5 MB default lim
       paddleocrOptions: 'PaddleOCR Options',
       paddleocrApiUrl: 'PaddleOCR API URL',
       paddleocrApiUrlTip: 'The API endpoint URL for PaddleOCR service',
-      paddleocrApiUrlPlaceholder: 'e.g. https://paddleocr-server.com/layout-parsing',
+      paddleocrApiUrlPlaceholder:
+        'e.g. https://paddleocr-server.com/layout-parsing',
       paddleocrAccessToken: 'AI Studio Access Token',
       paddleocrAccessTokenTip: 'Access token for PaddleOCR API (optional)',
       paddleocrAccessTokenPlaceholder: 'Your AI Studio token (optional)',
@@ -663,6 +670,7 @@ This auto-tagging feature enhances retrieval by adding another layer of domain-s
         'In a knowledge graph, a community is a cluster of entities linked by relationships. You can have the LLM generate an abstract for each community, known as a community report. See here for more information: https://www.microsoft.com/en-us/research/blog/graphrag-improving-global-search-via-dynamic-community-selection/',
       theDocumentBeingParsedCannotBeDeleted:
         'The document being parsed cannot be deleted',
+      lastWeek: 'from last week',
     },
     chunk: {
       type: 'Type',
@@ -866,6 +874,8 @@ This auto-tagging feature enhances retrieval by adding another layer of domain-s
       chatSetting: 'Chat setting',
       tocEnhance: 'TOC enhance',
       tocEnhanceTip: ` During the parsing of the document, table of contents information was generated (see the 'Enable Table of Contents Extraction' option in the General method). This allows the large model to return table of contents items relevant to the user's query, thereby using these items to retrieve related chunks and apply weighting to these chunks during the sorting process. This approach is derived from mimicking the behavioral logic of how humans search for knowledge in books.`,
+      batchDeleteSessions: 'Batch delete',
+      deleteSelectedConfirm: 'Delete the selected {count} session(s)?',
     },
     setting: {
       deleteModel: 'Delete model',
@@ -1107,14 +1117,15 @@ Example: Virtual Hosted Style`,
       baseUrlNameMessage: 'Please input your base url!',
       paddleocr: {
         apiUrl: 'PaddleOCR API URL',
-        apiUrlPlaceholder: 'For example: https://paddleocr-server.com/layout-parsing',
+        apiUrlPlaceholder:
+          'For example: https://paddleocr-server.com/layout-parsing',
         accessToken: 'AI Studio Access Token',
         accessTokenPlaceholder: 'Your AI Studio token (optional)',
         algorithm: 'PaddleOCR Algorithm',
         selectAlgorithm: 'Select Algorithm',
         modelNamePlaceholder: 'For example: paddleocr-from-env-1',
         modelNameRequired: 'Model name is required',
-        apiUrlRequired: 'PaddleOCR API URL is required'
+        apiUrlRequired: 'PaddleOCR API URL is required',
       },
       vision: 'Does it support Vision?',
       ollamaLink: 'How to integrate {{name}}',
@@ -2443,7 +2454,9 @@ Important structured information may include: names, dates, locations, events, k
 
       role: 'Role',
       user: 'User',
+      userType: 'User type',
       superuser: 'Superuser',
+      normalUser: 'Normal',
 
       createTime: 'Create time',
       lastLoginTime: 'Last login time',
